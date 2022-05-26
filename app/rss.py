@@ -20,6 +20,8 @@ def update_rss(ndate = None, nnum=None, ntext='', ntitle = 'Обновление
     assert nnum is not None
     assert len(ntext)>0
 
+    print('CURRENT PATH', Path.cwd(), file_path)
+
     newtext = ntext.replace('<', '&lt;').replace('>', '&gt;')
 
     if Path(file_path).exists():
@@ -36,7 +38,7 @@ def update_rss(ndate = None, nnum=None, ntext='', ntitle = 'Обновление
 
                 item.find('description').text = newtext
                 item.find('pubDate').text = ndate.strftime('%a, %d %b %Y %H:%M:%S %Z')
-                tree.write('rss.xml', encoding="utf-8")
+                tree.write(file_path, encoding="utf-8")
 
                 return
         except:
@@ -51,7 +53,7 @@ def update_rss(ndate = None, nnum=None, ntext='', ntitle = 'Обновление
     root[0].insert(11, xnew)
 
     ET.indent(tree, space="\t", level=0)
-    tree.write('rss.xml', encoding="utf-8")
+    tree.write(file_path, encoding="utf-8")
 
 def delete_item(guid=0, file_path = 'rss.xml'):
     assert Path(file_path).exists()
@@ -64,13 +66,13 @@ def delete_item(guid=0, file_path = 'rss.xml'):
             if int(item.find('guid').text) == int(guid):
                 root[0].remove(item)
                 ET.indent(tree, space="\t", level=0)
-                tree.write('rss.xml', encoding="utf-8")
+                tree.write(file_path, encoding="utf-8")
                 return int(guid)
         except:
             root[0].remove(item)
 
     ET.indent(tree, space="\t", level=0)
-    tree.write('rss.xml', encoding="utf-8")
+    tree.write(file_path, encoding="utf-8")
 
 
 if __name__ == '__main__':

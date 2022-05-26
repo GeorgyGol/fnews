@@ -1,12 +1,15 @@
-from flask import render_template, request, session, redirect, url_for, flash, get_flashed_messages
+from pathlib import Path
+
+from flask import render_template, request, session, redirect, url_for, flash
+
 import app
 from app.database.models import NNew, update_db, delete_new
-from app.main_form import NewsForm, DATE_FORMAT
+from app.main_form import NewsForm
 from app.rss import delete_item, update_rss
+from app.telega import send_message2
 
-import datetime as dt
 
-@app.appFL.route('/', methods = ['GET', 'POST'])
+@app.appFL.route('/', methods=['GET', 'POST'])
 def index():
     form = NewsForm()
     # nnews = NNew.query.order_by(NNew.NDate.desc())#.limit(10)
@@ -14,14 +17,18 @@ def index():
         if 'save' in request.form:
             if form.validate_on_submit():
                 session.pop('DELETE_NEWS', None)
-                num  = form.nnum.data
+                num = form.nnum.data
                 text = form.ntext.data
-                dat  = form.ndate.data
-                isV  = form.isVis.data
+                dat = form.ndate.data
+                isV = form.isVis.data
                 isRSS = form.isRSS.data
+                isTG = form.isTG.data
+
                 new_id = update_db(nnum=num, ntext=text, ndate=dat, isVis=isV)
                 if isRSS:
-                    update_rss(ndate=dat, ntext=text, nnum=new_id)
+                    update_rss(ndate=dat, ntext=text, nnum=new_id, file_path=Path('rss', 'rss.xml'))
+                if isTG and (num == 'NEW'):  # в телеграм - только новые, потому что не умею редактировать
+                    send_message2(text)
                 flash('Изменения сохранены', 'success')
                 if num == 'NEW':
                     return redirect(url_for('index'))
@@ -37,7 +44,7 @@ def index():
                 if 'DELETE_NEWS' in session:
                     session.pop('DELETE_NEWS', None)
                     delete_new(num)
-                    delete_item(guid=num)
+                    delete_item(guid=num, file_path=Path('rss', 'rss.xml'))
                     return redirect(url_for('index'))
                 else:
                     flash(strDelAlarm, 'danger')
@@ -60,8 +67,7 @@ def index():
         # session.clear()
         session.pop('DELETE_NEWS', None)
         pass
-    return render_template('news.html', form=form)#, nnews=nnews)
-
+    return render_template('news.html', form=form)  # , nnews=nnews)
 
 
 @app.appFL.route('/api/data')
@@ -86,7 +92,7 @@ def data():
             break
 
         col_name = request.args.get(f'columns[{col_index}][data]')
-        if col_name not in ['NDate',]:
+        if col_name not in ['NDate', ]:
             col_name = 'NDate'
             # descending=True
         else:
@@ -114,9 +120,11 @@ def data():
         'draw': request.args.get('draw', type=int),
     }
 
+
 @app.appFL.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 @app.appFL.errorhandler(500)
 def internal_server_error(e):
@@ -124,5 +132,4 @@ def internal_server_error(e):
 
 
 if __name__ == '__main__':
-    app.appFL.run(debug=True)
-
+    app.appFL.run(debug=False)

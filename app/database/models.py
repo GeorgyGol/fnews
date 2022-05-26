@@ -2,19 +2,19 @@ from enum import Enum
 import app
 import datetime as dt
 
-database = app.database #.SQLAlchemy(app.appFL)
+db_main = app.db_main #.SQLAlchemy(app.appFL)
 
 class VISIBILITY(Enum):
     YES = -1
     NO = 0
 
-class NNew(database.Model):
+class NNew(db_main.Model):
     __tablename__ = 'news'
 
-    ID = database.Column(database.Integer, primary_key = True)
-    NDate = database.Column(database.DateTime, index = True, unique = False)
-    NText = database.Column(database.Text)
-    IsVisible = database.Column(database.SmallInteger, default = VISIBILITY.YES)
+    ID = db_main.Column(db_main.Integer, primary_key = True)
+    NDate = db_main.Column(db_main.DateTime, index = True, unique = False)
+    NText = db_main.Column(db_main.Text)
+    IsVisible = db_main.Column(db_main.SmallInteger, default = VISIBILITY.YES)
 
     def __repr__(self):
         return f'# {self.ID}; {self.NDate.strftime("%Y-%m-%d")}; {self.NText} - vis={self.IsVisible}'
@@ -38,10 +38,10 @@ def update_db(nnum=None, ndate=None, ntext='', isVis=True):
         newnew = NNew.query.filter_by(ID=nnum).update(dict(NText=ntext, NDate=ndate, IsVisible=isVis))
     except ValueError:
         newnew = NNew(NDate = ndate, NText = ntext, IsVisible = isVis)
-        database.session.add(newnew)
-    database.session.commit()
+        db_main.session.add(newnew)
+    db_main.session.commit()
     try:
-        database.session.refresh(newnew)
+        db_main.session.refresh(newnew)
         return newnew.ID
     except:
         return nnum
@@ -55,12 +55,12 @@ def delete_new(nnum):
         raise ValueError('Нельзя удалить то, чего нет')
 
     deleted = NNew.query.filter_by(ID=nnum).first()
-    database.session.delete(deleted)
-    database.session.commit()
+    db_main.session.delete(deleted)
+    db_main.session.commit()
 
 
 def create_db():
-    database.create_all()
+    db_main.create_all()
 
 def test_news():
     news = NNew.query.order_by(NNew.NDate.desc()).limit(10)
