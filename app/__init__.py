@@ -13,14 +13,23 @@ bootstrap = Bootstrap(app)
 # print('flask application: ', app.name)
 
 # from app.database.config import user, password, server, database_name, wtf_seckey
-
-user = os.environ['DBUSER']
-password = os.environ['DBPASS']
-server = os.environ['DBSERVER']
-database_name = os.environ['DATABASE']
-wtf_seckey = bytearray(os.environ['WTF_SECRET'].encode())
-bot_token = os.environ['BOT_TOKEN']
-channel_id = os.environ['CHANNAL_ID']
+try:
+    user = os.environ['DBUSER']
+    password = os.environ['DBPASS']
+    server = os.environ['DBSERVER']
+    database_name = os.environ['DATABASE']
+    wtf_seckey = bytearray(os.environ['WTF_SECRET'].encode())
+    bot_token = os.environ['BOT_TOKEN']
+    channel_id = os.environ['CHANNAL_ID']
+except KeyError:
+    # have no os.env - starting DEV ENV config
+    user = 'DEV'
+    password = '123'
+    server = 'localhost'
+    database_name = 'DB'
+    wtf_seckey = bytearray('cmasf1310news').encode()
+    bot_token = 'not needed'
+    channel_id = 'not needed too'
 
 # def print_env():
 #     print(f'{user=}')
@@ -33,12 +42,12 @@ channel_id = os.environ['CHANNAL_ID']
 
 try:
     work_path = os.environ['APP_DIR']
-except:
+except KeyError:
     work_path=''
 
 if user == 'DEV':
     str_sqlite = f'sqlite://{work_path}/database/news.sqlite3'
-    print(f'{str_sqlite}')
+    # print(f'{str_sqlite}')
     app.config['SQLALCHEMY_DATABASE_URI'] = str_sqlite
 else:
     # print('!!!!!!!!')

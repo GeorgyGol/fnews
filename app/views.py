@@ -8,11 +8,12 @@ from app.main_form import NewsForm
 from app.rss import delete_item, update_rss
 from app.telega import send_message2
 import time
-
+import datetime as dt
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = NewsForm()
+    form.ndate.data=dt.datetime.now()
     if user == 'DEV':
         work_status = 'dev-settings: local DB and testing telegram'
     else:
