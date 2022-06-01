@@ -38,7 +38,7 @@ except:
 
 if user == 'DEV':
     str_sqlite = f'sqlite://{work_path}/database/news.sqlite3'
-    print(f'{str_sqlite}')
+    # print(f'{str_sqlite}')
     app.config['SQLALCHEMY_DATABASE_URI'] = str_sqlite
 else:
     # print('!!!!!!!!')
