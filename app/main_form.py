@@ -3,7 +3,7 @@ from wtforms import StringField, DateTimeField, BooleanField, SubmitField, TextA
 from wtforms.validators import DataRequired, InputRequired, length, ValidationError, Regexp
 from wtforms.widgets import TextArea, DateTimeInput
 import datetime as dt
-from bs4 import BeautifulSoup as soup
+# from bs4 import BeautifulSoup as soup
 
 DATE_FORMAT = '%Y-%m-%d %H:%M'
 
@@ -17,11 +17,11 @@ def date_format_validate(form, field):
     #     raise ValidationError(f'Не правильно дата введена: {err}')
     # return True
 
-def html_validate(strINP):
-    sp = soup(strINP, 'html.parser')
-    print(sp.get_text())
-
-    return True
+# def html_validate(strINP):
+#     sp = soup(strINP, 'html.parser')
+#     print(sp.get_text())
+#
+#     return True
 
 class NewsForm(FlaskForm):
     nnum = StringField('Номер:', render_kw={'readonly': True}, default='NEW')
@@ -43,4 +43,4 @@ if __name__ == '__main__':
     strT = '''Подготовлено исследование <a href="http://www.forecast.ru/_ARCHIVE/Analitics/Soln/BSVAR1.pdf">"Оценка эффективности мер денежно-кредитной политики и валютного контроля в условиях санкционного давления на российскую экономику"<br><i>
 В данном исследовании анализируются макроэкономические последствия применения инструментов денежно-кредитной политики и валютного контроля в условиях санкций. Используя модель байесовской структурной векторной авторегрессии (BSVAR), мы показываем, что контроль над движением потоков капитала является весьма эффективной мерой антикризисного регулирования. Он позволяет поддержать объемы экспорта и импорта, сохранить уверенную динамику корпоративного кредитования и, при этом, не оказывает дестабилизирующего воздействия на курс рубля и инфляцию.</i>
     '''
-    print(html_validate(strT))
+    # print(html_validate(strT))
