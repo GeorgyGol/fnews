@@ -46,4 +46,4 @@ jobs:
    
     - name: Test with pytest
       run: |
-        coverage app/newsAdm_test.py
+        coverage run app/newsAdm_test.py
