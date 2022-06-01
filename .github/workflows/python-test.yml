@@ -31,7 +31,9 @@ jobs:
     - name: setup environment for test
       run: |
         export DBUSER=DEV
-        
+        export BOT_TOKEN=${{ secrets.TESTING_TAST_BOT }}
+        export CHANNAL_ID=${{ secrets.CH_STEP_BY_STEP }}
+        export WTF_SECRET=cmasf_1310_news
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
