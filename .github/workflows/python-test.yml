@@ -38,4 +38,4 @@ jobs:
       run: source dev.env
     - name: Test with pytest
       run: |
-        coverage newsAdm_test.py
+        coverage app/newsAdm_test.py
