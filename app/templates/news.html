@@ -1,5 +1,7 @@
 {% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block title %}
+
 Новости ЦМАКП: администрилка
 
 {% endblock %}
@@ -40,7 +42,8 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="http://www.forecast.ru" target="_blank">FORECAST.RU</a></li>
-                <li><a href="http://www.forecast.ru" target="_blank">Telegram</a></li>
+                <li><a href="https://t.me/cmasf" target="_blank">Telegram</a></li>
+                <li><a href=/download target="_blank">RSS</a></li>
             </ul>
         </div>
     </div>
@@ -50,20 +53,74 @@
 {% block content %}
 <div class="container container-fluid">
     <div class="page-header">
-        <h1>Новости Центра:</h1>
+        <h2>Администрирование: {{ work_status }} </h2>
     </div>
+    <div class="panel panel-collapse  panel-info">
+        <div class="panel panel-heading">
+            <h3>Новости Центра:</h3>
+        </div>
+        <div class="panel-body p" >
+            <div class="panel-info">
+                <div class="container">
+                    {% for category, message in get_flashed_messages(with_categories=true) %}
+                    <div class="alert alert-{{category}} col-md-10" role="alert">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
 
-    <table id="data" class="table table-striped table-bordered table-condensed">
-        <thead class="text-center thead-dark">
-            <th width="5%">№</th>
-            <th width="10%">Дата</th>
-            <th width="80%">Новость</th>
-            <th width="5%">Видима</th>
-        </thead>
-        <tbody>
+                <form method="post" id="new_edit">
+                    <table border="0", width="96%", align="center">
+                        <tr>
+                            <td width="25%">{{ form.hidden_tag() }}{{ form.nnum.label }}&nbsp;&nbsp;{{ form.nnum(id='cur_num_f') }}</td>
+                            <td width="50%" align="left"> {{ form.ndate.label }}&nbsp;&nbsp;{{ form.ndate(id='cur_date_f', class_='datepicker') }}  </td>
+                            <td width="25%" align="right"> {{ form.isVis.label }}{{ form.isVis(id='cur_vis_f') }}  </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" valign="top" align="left">{{ form.ntext.label(class_="control-label") }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" valign="top" width="100%">
+                                <div style="width: 100%">
+                                    {{ form.ntext(id='cur_news_f', rows=5, cols=50, class_="form-control")  }}
+                                </div>
 
-        </tbody>
-    </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left" width="25%">
+                                <input id="make_new" name="make_new"
+                                       type="button" value="Новая" onclick="click_new(false);">
+                                <input id="copy_new" name="copy_new" disabled
+                                       type="button" value="Новая из копии" onclick="click_new(true);">
+                            </td>
+                            <td align="center">
+                                <input id="add_url" name="add_url" disabled
+                                       type="button" value="Вставить URL" onclick="insert_url();">&nbsp;&nbsp;
+                                {{ form.isRSS.label }}{{ form.isRSS(id='cur_rss_f') }}&nbsp;
+                                {{ form.isTG.label }}{{ form.isTG(id='cur_rss_f') }}
+                            </td>
+                            <td align="right" width="25%">{{ form.delete() }}{{ form.submit() }}</td>
+                        </tr>
+                    </table>
+                </form>
+                <br>
+                <hr>
+            </div>
+            <table id="data" class="table table-striped table-bordered table-condensed">
+                <thead class="text-center thead-dark">
+                    <th width="5%">№</th>
+                    <th width="10%">Дата</th>
+                    <th width="80%">Новость</th>
+                    <th width="5%">Видима</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
 {% endblock %}
@@ -71,15 +128,52 @@
 {% block scripts %}
 {{ super() }}
 
+<script type="text/javascript" charset="utf8" src="https:///cdn.datatables.net/plug-ins/1.11.5/dataRender/datetime.js"></script>
 <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.js"></script>
-<script src="cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js" charset="utf8"></script>
+
 
 <script>
+function click_new(from_copy){
+    var inputN = document.getElementById('cur_num_f');
+    inputN.value = "NEW";
+
+    let now = new Date();
+    var datestring = now.getFullYear() + "-" + ("0" + (now.getMonth()+1)).slice(-2) + "-" + now.getDate() + " " +
+        ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2);
+    var inputD = document.getElementById('cur_date_f');
+    inputD.value = datestring;
+    if (!from_copy){
+        var inputT = document.getElementById('cur_news_f');
+        inputT.value = "";
+
+        var inputV = document.getElementById('cur_vis_f');
+        inputV.checked = true;
+
+        var bt_newcopy = document.getElementById('copy_new');
+        bt_newcopy.disabled = true;
+    }
+}
+
+function insert_url(){
+
+    var inputT = document.getElementById('cur_news_f');
+    // inputT.value = tnews.row(this).cell(this, 2).data();
+    var t = inputT.value.substr(inputT.selectionStart, inputT.selectionEnd - inputT.selectionStart);
+    var url = prompt("Введи URL!!!", "");
+    var new_textS = inputT.value.substr(0, inputT.selectionStart);
+    var new_textE = inputT.value.substr(inputT.selectionEnd);
+    var newT = '<a href=\"' + url +'\">' + t + "</a>"
+    inputT.value = new_textS + newT + new_textE;
+    var bt_newcopy = document.getElementById('add_url');
+    bt_newcopy.disabled = true;
+    // alert('select' + new_textS + " --- " + newT + " --- " + new_textE);
+}
+
 $(document).ready(function () {
 
-  $('#data').DataTable({
+    var tnews = $('#data').DataTable({
         ajax: '/api/data',
         serverSide: true,
         order:[[1, 'desc']],
@@ -99,7 +193,21 @@ $(document).ready(function () {
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         language: {
             search: "Поиск",
-            searchPlaceholder: "Часть текста новости"},
+            searchPlaceholder: "Часть текста новости",
+            lengthMenu: "_MENU_ новостей на странице",
+            zeroRecords: "Ничего не найдено",
+            info: "Страница _PAGE_ из _PAGES_",
+            infoEmpty: "Нет ничего",
+            infoFiltered: "(всего _MAX_ записей)",
+            thousands : " ",
+            paginate: {
+                first:      "Первая",
+                last:       "Последняя",
+                next:       "След.",
+                previous:   "Пред."
+    },
+
+        },
 
         columns: [
           {data: 'ID', orderable: false, searchable: false, width:"5%", className: "custd"},
@@ -109,6 +217,38 @@ $(document).ready(function () {
           {data: 'IsVisible', orderable: false, searchable: false, width:"5%", className: "custd"}
         ],
       });
+
+    $('#data tbody').on( 'click', 'tr', function () {
+        //$(this).toggleClass('selected');
+
+        var inputT = document.getElementById('cur_news_f');
+        inputT.value = tnews.row(this).cell(this, 2).data();
+
+        var inputN = document.getElementById('cur_num_f');
+        inputN.value = tnews.row(this).cell(this, 0).data();
+
+        var inputV = document.getElementById('cur_vis_f');
+        inputV.checked = tnews.row(this).cell(this, 3).data() != 0;
+
+        var inputD = document.getElementById('cur_date_f');
+        inputD.value = tnews.row(this).cell(this, 1).data().replace('<br>', ' ');
+
+        var bt_newcopy = document.getElementById('copy_new');
+        bt_newcopy.disabled = false;
+        // alert(tnews.row(this).cell(this, 0).data());
+    } );
+
+    $('#button').click( function () {
+        alert( table.rows('.selected').data().length +' row(s) selected' );
+    } );
+
+    $('#cur_news_f').select(function() {
+        var bt_newcopy = document.getElementById('add_url');
+        bt_newcopy.disabled = false;
+
+
+});
+
 });
 </script>
 {% endblock %}
