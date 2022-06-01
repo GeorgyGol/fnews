@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import  requests
 import datetime as dt
 from pathlib import Path
+import os
 
 strItemTemplate = '''
 <item>
@@ -19,8 +20,6 @@ def update_rss(ndate = None, nnum=None, ntext='', ntitle = 'Обновление
     assert type(ndate) == dt.datetime
     assert nnum is not None
     assert len(ntext)>0
-
-    print('CURRENT PATH', Path.cwd(), file_path)
 
     newtext = ntext.replace('<', '&lt;').replace('>', '&gt;')
 

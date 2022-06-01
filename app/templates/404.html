@@ -1,6 +1,19 @@
-{% extends "news.html" %}
+{% extends "bootstrap/base.html" %}
 
 {% block title %} ЦМАКП новости: страница не найдена {% endblock %}
+
+{% block styles %}
+<!-- users styles here-->
+{{ super() }}
+
+{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='cmasf.gif') }}" type="image/x-icon>">
+<link rel="icon" href="{{ url_for('static', filename='cmasf.gif') }}" type="image/x-icon>">
+{% endblock %}
+
 {% block page_content %}
 <div class="container">
     <div class="page-header">

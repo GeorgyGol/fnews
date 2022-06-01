@@ -3,7 +3,7 @@ from wtforms import StringField, DateTimeField, BooleanField, SubmitField, TextA
 from wtforms.validators import DataRequired, InputRequired, length, ValidationError, Regexp
 from wtforms.widgets import TextArea, DateTimeInput
 import datetime as dt
-from bs4 import BeautifulSoup as soup
+# from bs4 import BeautifulSoup as soup
 
 DATE_FORMAT = '%Y-%m-%d %H:%M'
 
@@ -17,11 +17,11 @@ def date_format_validate(form, field):
     #     raise ValidationError(f'Не правильно дата введена: {err}')
     # return True
 
-def html_validate(strINP):
-    sp = soup(strINP, 'html.parser')
-    print(sp.get_text())
-
-    return True
+# def html_validate(strINP):
+#     sp = soup(strINP, 'html.parser')
+#     print(sp.get_text())
+#
+#     return True
 
 class NewsForm(FlaskForm):
     nnum = StringField('Номер:', render_kw={'readonly': True}, default='NEW')

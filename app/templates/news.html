@@ -42,7 +42,8 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="http://www.forecast.ru" target="_blank">FORECAST.RU</a></li>
-                <li><a href="http://www.forecast.ru" target="_blank">Telegram</a></li>
+                <li><a href="https://t.me/cmasf" target="_blank">Telegram</a></li>
+                <li><a href=/download target="_blank">RSS</a></li>
             </ul>
         </div>
     </div>
@@ -52,7 +53,7 @@
 {% block content %}
 <div class="container container-fluid">
     <div class="page-header">
-        <h2>Администрирование:</h2>
+        <h2>Администрирование: {{ work_status }} </h2>
     </div>
     <div class="panel panel-collapse  panel-info">
         <div class="panel panel-heading">
@@ -131,7 +132,7 @@
 <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.js"></script>
-<script src="cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js" charset="utf8"></script>
+
 
 <script>
 function click_new(from_copy){
