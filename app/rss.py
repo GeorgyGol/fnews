@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+
 import  requests
 import datetime as dt
 from pathlib import Path
@@ -50,8 +51,10 @@ def update_rss(ndate = None, nnum=None, ntext='', ntitle = 'Обновление
     xnew.tail='\n\t'
 
     root[0].insert(11, xnew)
-
-    ET.indent(tree, space="\t", level=0)
+    try:
+        ET.indent(tree, space="\t", level=0)
+    except AttributeError:
+        pass # запуск из Питона младших версий
     tree.write(file_path, encoding="utf-8")
 
 def delete_item(guid=0, file_path = 'rss.xml'):
@@ -75,10 +78,11 @@ def delete_item(guid=0, file_path = 'rss.xml'):
 
 
 if __name__ == '__main__':
-    dtn = dt.datetime.now()
-    print(dtn.strftime('%a, %d %b %Y %H:%M:%S %Z'))
-    update_rss(ndate=dtn, nnum=10, ntext='chao-chao')
-
-    tree = ET.parse('rss.xml')
-    ET.dump(tree)
+    # dtn = dt.datetime.now()
+    # print(dtn.strftime('%a, %d %b %Y %H:%M:%S %Z'))
+    # update_rss(ndate=dtn, nnum=10, ntext='chao-chao')
+    #
+    # tree = ET.parse('rss.xml')
+    # ET.dump(tree)
+    print('Add done')
     # delete_item(guid=10)
