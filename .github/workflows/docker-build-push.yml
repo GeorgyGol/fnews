@@ -15,15 +15,11 @@ jobs:
 
     steps:
     - name: set env
-      env:
-        LOGIN: ${{ secrets.DOCKER_LOGIN }}
-        NAME: ${{ secrets.DOCKER_NAME }}
-        PASSW: ${{ secrets.DOCKER_PWD }}
     - name: Login to docker.io
       run:  echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag $LOGIN/$NAME:news_admin
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:news_admin
       
     - name: Push to Dockerhub
-      run: docker push $LOGIN/$NAME:news_admin
+      run: docker push ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:news_admin
