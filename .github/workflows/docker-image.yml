@@ -19,7 +19,7 @@ jobs:
         LOG : ${{ secrets.DOCKER_LOGIN }}
         PWD : ${{ secrets.DOCKER_PWD }}
         NAME : ${{ secrets.DOCKER_NAME }}
-        REV : (date +%s)
+        REV : date +%s
       run: |
         echo $LOG
         echo $NAME
