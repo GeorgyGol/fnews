@@ -1,7 +1,7 @@
 from pathlib import Path
 from flask import render_template, request, session, redirect, url_for, flash, send_file
 
-from app import app
+from app import app, __version__
 from app import work_path, user
 from app.database.models import NNew, update_db, delete_new
 from app.main_form import NewsForm
@@ -17,7 +17,7 @@ def index():
     if user == 'DEV':
         work_status = 'dev-settings: local DB and testing telegram'
     else:
-        work_status = ''
+        work_status = f'(ver. {__version__})'
 
     # nnews = NNew.query.order_by(NNew.NDate.desc())#.limit(10)
     if request.method == 'POST':
