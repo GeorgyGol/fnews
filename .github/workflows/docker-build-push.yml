@@ -19,7 +19,11 @@ jobs:
       run:  echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:news_admin
+      run: |
+        echo ${{ secrets.DOCKER_LOGIN }}
+        echo ${{ secrets.DOCKER_NAME }}
+        export REV=$(date +%s)
+        docker build . --file Dockerfile --tag dragsnake/cmasf:news_admin:$REV
       
     - name: Push to Dockerhub
-      run: docker push ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:news_admin
+      run: docker push dragsnake/cmasf:news_admin:REV
