@@ -49,8 +49,7 @@ jobs:
         LOG : ${{ secrets.DOCKER_LOGIN }}
         PWD : ${{ secrets.DOCKER_PWD }}
         NAME : ${{ secrets.DOCKER_NAME }}
-        REV : ${{ date +%s }}
       run: |
-        docker build . --file Dockerfile --tag $LOG/$NAME:news_admin:$REV
+        docker build . --file Dockerfile --tag $LOG/$NAME:news_admin
         echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
-        docker push $LOG/$NAME:news_admin:$REV
+        docker push $LOG/$NAME:news_admin
