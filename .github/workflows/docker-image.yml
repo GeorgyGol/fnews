@@ -1,0 +1,27 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build and Push the Docker image
+      run: |
+        export LOG=${{ secrets.DOCKER_LOGIN }}
+        export PWD=${{ secrets.DOCKER_PWD }}
+        export NAME=${{ secrets.DOCKER_NAME }}
+        export REV = $(date +%s)
+        echo $LOG
+        echo $NAME
+        docker build . --file Dockerfile --tag $LOG/$NAME:news_admin:$REV
+        echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
+        docker push $LOG/$NAME:news_admin:$REV
