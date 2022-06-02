@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Tests Build and Docker Image CI
 
 on:
   push:
@@ -7,11 +7,41 @@ on:
     branches: [ main ]
 
 jobs:
-
-  build:
-
+  run_tests:
     runs-on: ubuntu-latest
-
+    env:
+        DBUSER : "DEV"
+        BOT_TOKEN : ${{ secrets.TESTING_TAST_BOT }}
+        CHANNAL_ID : ${{ secrets.CH_STEP_BY_STEP }}
+        WTF_SECRET : "cmasf_1310_news"
+        DBSERVER : "local"
+        DBPASS : "111"
+        DATABASE : "local"
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.9"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest coverage
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+   
+    - name: Test with pytest
+      run: coverage run -m app.utests
+      
+  build_and_push:
+    needs: [run_tests]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Build and Push the Docker image
@@ -19,10 +49,8 @@ jobs:
         LOG : ${{ secrets.DOCKER_LOGIN }}
         PWD : ${{ secrets.DOCKER_PWD }}
         NAME : ${{ secrets.DOCKER_NAME }}
-
+        REV : ${{ date +%s }}
       run: |
-        echo $LOG
-        echo $NAME
-        docker build . --file Dockerfile --tag $LOG/$NAME:news_admin
+        docker build . --file Dockerfile --tag $LOG/$NAME:news_admin:$REV
         echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
-        docker push $LOG/$NAME:news_admin
+        docker push $LOG/$NAME:news_admin:$REV
