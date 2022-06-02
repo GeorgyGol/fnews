@@ -1,5 +1,7 @@
+__version__ = '0.1.1'
+
 from flask import Flask, render_template, request
-from flask_bootstrap import Bootstrap, __version__
+from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import re
@@ -27,7 +29,7 @@ except KeyError:
     password = '123'
     server = 'localhost'
     database_name = 'DB'
-    wtf_seckey = bytearray('cmasf1310news').encode()
+    wtf_seckey = bytearray('cmasf1310news'.encode())
     bot_token = 'not needed'
     channel_id = 'not needed too'
 

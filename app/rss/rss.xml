@@ -1,0 +1,28 @@
+<rss version="2.0">
+	<channel>
+		<title>Центр макроэкономического анализа и краткосрочного прогнозирования</title>
+		<link>http://www.forecast.ru</link>
+		<description>лента новостей Центра макроэкономического анализа и краткосрочного прогнозирования</description>
+		<language>ru</language>
+		<copyright>ЦМАКП</copyright>
+		<managingEditor>g.golyshev@forecast.ru</managingEditor>
+		<webMaster>g.ggolyshev@forecast.ru</webMaster>
+		<pubDate>Mon, 30 May 2022 12:36:51 GMT</pubDate>
+		<lastBuildDate>Mon, 30 May 2022 12:36:51 GMT</lastBuildDate>
+		<category>analitics, forecasting</category>
+		<image>
+			<title>Центр макроэкономического анализа и краткосрочного прогнозирования</title>
+			<url>/feed/rss_fore.gif</url>
+			<link>http://www.forecast.ru</link>
+		</image>
+	<item>
+        <title>UNITTEST</title>
+        <link>http://www.forecast.ru/default.aspx</link>
+        <description>for testing only</description>
+        <autor>CMASF</autor>
+        <pubDate>Thu, 02 Jun 2022 19:11:14 </pubDate>
+        <guid>TEST</guid>
+        <category>macroeconomica</category>
+    </item>
+	</channel>
+</rss>
