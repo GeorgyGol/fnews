@@ -15,10 +15,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build and Push the Docker image
+      env:
+        LOG : ${{ secrets.DOCKER_LOGIN }}
+        PWD : ${{ secrets.DOCKER_PWD }}
+        NAME : ${{ secrets.DOCKER_NAME }}
       run: |
-        export LOG=${{ secrets.DOCKER_LOGIN }}
-        export PWD=${{ secrets.DOCKER_PWD }}
-        export NAME=${{ secrets.DOCKER_NAME }}
         export REV = $(date +%s)
         echo $LOG
         echo $NAME
