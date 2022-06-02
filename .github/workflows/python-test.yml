@@ -29,14 +29,14 @@ jobs:
         pip install flake8 pytest coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: setup environment for test
-      run: |
-        export DBUSER=DEV
-        export BOT_TOKEN=${{ secrets.TESTING_TAST_BOT }}
-        export CHANNAL_ID=${{ secrets.CH_STEP_BY_STEP }}
-        export WTF_SECRET=cmasf_1310_news
-        export DBSERVER=local
-        export DBPASS=111
-        export DATABASE=local
+      env:
+        DBUSER : ${{ DEV }}
+        BOT_TOKEN : ${{ secrets.TESTING_TAST_BOT }}
+        CHANNAL_ID : ${{ secrets.CH_STEP_BY_STEP }}
+        WTF_SECRET : ${{ cmasf_1310_news }}
+        DBSERVER : ${{ local }}
+        DBPASS : ${{ 111 }}
+        DATABASE : ${{ local }}
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -45,12 +45,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
    
     - name: Test with pytest
-      run: |
-        export DBUSER=DEV
-        export BOT_TOKEN=${{ secrets.TESTING_TAST_BOT }}
-        export CHANNAL_ID=${{ secrets.CH_STEP_BY_STEP }}
-        export WTF_SECRET=cmasf_1310_news
-        export DBSERVER=local
-        export DBPASS=111
-        export DATABASE=local
-        coverage run -m app.utests
+      run: coverage run -m app.utests
