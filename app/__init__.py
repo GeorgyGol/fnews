@@ -1,4 +1,4 @@
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 from flask import Flask, render_template, request
 from flask_bootstrap import Bootstrap
@@ -23,6 +23,7 @@ try:
     wtf_seckey = bytearray(os.environ['WTF_SECRET'].encode())
     bot_token = os.environ['BOT_TOKEN']
     channel_id = os.environ['CHANNAL_ID']
+    db_driver = 'mssql+pymssql' if server != 'commd' else 'mysql+pymysql'
 except KeyError:
     # have no os.env - starting DEV ENV config
     user = 'DEV'
@@ -32,6 +33,7 @@ except KeyError:
     wtf_seckey = bytearray('cmasf1310news'.encode())
     bot_token = 'not needed'
     channel_id = 'not needed too'
+    db_driver = 'sqlite'
 
 # def print_env():
 #     print(f'{user=}')
@@ -49,12 +51,10 @@ except KeyError:
 
 if user == 'DEV':
     str_sqlite = f'sqlite://{work_path}/database/news.sqlite3'
-    # print(f'{str_sqlite}')
-    app.config['SQLALCHEMY_DATABASE_URI'] = str_sqlite
 else:
-    # print('!!!!!!!!')
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pymssql://{user}:{password}@{server}/{database_name}'
+    str_sqlite = f"{db_driver}://{user}:{password}@{server}/{database_name}"
 
+app.config['SQLALCHEMY_DATABASE_URI'] = str_sqlite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # appFL..config.from_object('config')
 

@@ -2,7 +2,7 @@ from pathlib import Path
 from flask import render_template, request, session, redirect, url_for, flash, send_file
 
 from app import app, __version__
-from app import work_path, user
+from app import work_path, user, db_main
 from app.database.models import NNew, update_db, delete_new
 from app.main_form import NewsForm
 from app.rss import delete_item, update_rss
@@ -10,8 +10,18 @@ from app.telega import send_message2
 import time
 import datetime as dt
 
+
+def get_proxy_pref():
+    try:
+        return request.headers['X-Proxy-URI']
+    except KeyError:
+        return url_for('index')
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+
+    request_uri = get_proxy_pref()
+
     form = NewsForm()
     form.ndate.data=dt.datetime.now()
     if user == 'DEV':
@@ -41,7 +51,7 @@ def index():
                     send_message2(text)
                 flash('Изменения сохранены', 'success')
                 if num == 'NEW':
-                    return redirect(url_for('index'))
+                    return redirect(url_for('index'), proxy_t=request_uri)
             else:
                 flash('Проверь формат даты', 'warning')
         elif 'delete' in request.form:
@@ -59,7 +69,7 @@ def index():
                                     file_path=str(Path(work_path, 'rss', 'rss.xml')))
                     except:
                         pass
-                    return redirect(url_for('index'))
+                    return redirect(url_for('index'), proxy_t=request_uri)
                 else:
                     flash(strDelAlarm, 'danger')
                     session['DELETE_NEWS'] = strDelAlarm
@@ -80,7 +90,9 @@ def index():
     else:
         # session.clear()
         session.pop('DELETE_NEWS', None)
-    return render_template('news.html', form=form, work_status=work_status,
+
+    return render_template('news.html', form=form, work_status=work_status, db_name = db_main.engine.url.database,
+                           db_host = db_main.engine.url.host, proxy_t=request_uri,
                            rss_file_path=str(Path(work_path, 'rss', 'rss.xml')))  # , nnews=nnews)
 
 
